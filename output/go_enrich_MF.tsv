@@ -1,0 +1,23 @@
+GO.ID	Term	Annotated	Significant	Expected	classicFisher
+1	GO:0003735	structural constituent of ribosome	153	55	1.57	1e-30
+2	GO:0003723	RNA binding	1409	64	14.43	6.9e-17
+3	GO:0019843	rRNA binding	56	14	0.57	1e-08
+4	GO:0048027	mRNA 5'-UTR binding	23	5	0.24	3e-06
+5	GO:0042608	T cell receptor binding	7	3	0.07	3.5e-05
+6	GO:0008097	5S rRNA binding	10	3	0.1	0.00012
+7	GO:0070181	small ribosomal subunit rRNA binding	11	3	0.11	0.00016
+8	GO:0003746	translation elongation factor activity	17	3	0.17	0.00064
+9	GO:0003729	mRNA binding	200	12	2.05	0.00101
+10	GO:1990948	ubiquitin ligase inhibitor activity	5	2	0.05	0.00102
+11	GO:0097100	supercoiled DNA binding	5	2	0.05	0.00102
+12	GO:0005515	protein binding	7819	92	80.05	0.00172
+13	GO:0045296	cadherin binding	251	8	2.57	0.00417
+14	GO:0030544	Hsp70 protein binding	34	3	0.35	0.00496
+15	GO:0019901	protein kinase binding	493	13	5.05	0.00625
+16	GO:0030159	receptor signaling complex scaffold activity	15	2	0.15	0.01
+17	GO:0043027	cysteine-type endopeptidase inhibitor activity involved in apoptotic process	20	2	0.2	0.0175
+18	GO:0043548	phosphatidylinositol 3-kinase binding	21	2	0.22	0.01921
+19	GO:0019210	kinase inhibitor activity	53	2	0.54	0.02028
+20	GO:0019900	kinase binding	559	16	5.72	0.0243
+21	GO:0051059	NF-kappaB binding	29	2	0.3	0.03523
+22	GO:0051087	chaperone binding	80	3	0.82	0.04863
