@@ -11,7 +11,8 @@ packages <- c(
   'dplyr',
   'optparse',
   'tidyverse',
-  'ggplot2'
+  'ggplot2',
+  'Rgraphviz'
 )
 loaded <- lapply(X = packages, function(x) suppressMessages(suppressWarnings(require(x, character.only = TRUE))))
 
@@ -42,6 +43,15 @@ option_list = list(
 ); 
 opt_parser = OptionParser(option_list=option_list)
 opt = parse_args(opt_parser)
+
+# TESTPARAM
+dotest <- FALSE
+if(dotest){
+  opt$gene_list <- '~/Documents/contribution-day/20210621_contribution_day/go_enrich/gene_list.txt'
+  opt$gene_universe <- '~/Documents/contribution-day/20210621_contribution_day/go_enrich/gene_universe.txt'
+  opt$outdir <- '~/Documents/contribution-day/20210621_contribution_day/go_enrich/test_output'
+  opt$node_size <- 5
+}
 
 # Check gene list
 if (is.null(opt$gene_list)) { # Check if file was provided
@@ -203,13 +213,15 @@ for (ont in c("BP", "CC", "MF")) {
     coord_flip() + 
     theme(legend.text = element_text(size = 10)) # Legend text size
   ggsave(sprintf("%s/go_enrich_%s_top30_dotplot.png", opt$outdir, GOdata@ontology), height=8, width=10)
+  
+  # Create and save DAG
+  svg(sprintf("%s/go_enrich_%s_top5_DAG.svg", opt$outdir, GOdata@ontology), height=20, width=20)
+  showSigOfNodes(GOdata, score(result), firstSigNodes = 5, useInfo = "all")
+  dev.off()
 }
 
 end_time <- Sys.time()
 message(paste0("Finished ", script_name, " at ", end_time))
-
-
-
 
 
 

@@ -12,47 +12,46 @@ GO.ID	Term	Annotated	Significant	Expected	classicFisher
 11	GO:0048872	homeostasis of number of cells	198	8	2.04	6e-04
 12	GO:0002250	adaptive immune response	319	9	3.29	0.00068
 13	GO:0042273	ribosomal large subunit biogenesis	64	14	0.66	0.00079
-14	GO:0033153	T cell receptor V(D)J recombination	5	2	0.05	0.00103
-15	GO:0071838	cell proliferation in bone marrow	5	2	0.05	0.00103
-16	GO:0071839	apoptotic process in bone marrow	5	2	0.05	0.00103
-17	GO:0000470	maturation of LSU-rRNA	20	4	0.21	0.00149
-18	GO:0021542	dentate gyrus development	6	2	0.06	0.00154
-19	GO:0000462	maturation of SSU-rRNA from tricistronic rRNA transcript (SSU-rRNA, 5.8S rRNA, LSU-rRNA)	32	4	0.33	0.0018
-20	GO:0000056	ribosomal small subunit export from nucleus	7	2	0.07	0.00214
-21	GO:0071353	cellular response to interleukin-4	26	3	0.27	0.00234
-22	GO:0032071	regulation of endodeoxyribonuclease activity	8	2	0.08	0.00284
-23	GO:0050850	positive regulation of calcium-mediated signaling	28	3	0.29	0.00291
-24	GO:0042274	ribosomal small subunit biogenesis	62	13	0.64	0.00296
-25	GO:1904667	negative regulation of ubiquitin protein ligase activity	9	2	0.09	0.00363
-26	GO:0045060	negative thymic T cell selection	9	2	0.09	0.00363
-27	GO:0033673	negative regulation of kinase activity	184	3	1.9	0.00457
-28	GO:0045471	response to ethanol	67	4	0.69	0.005
-29	GO:0045663	positive regulation of myoblast differentiation	13	2	0.13	0.00765
-30	GO:0000463	maturation of LSU-rRNA from tricistronic rRNA transcript (SSU-rRNA, 5.8S rRNA, LSU-rRNA)	14	2	0.14	0.00886
-31	GO:0045116	protein neddylation	14	2	0.14	0.00886
-32	GO:0070233	negative regulation of T cell apoptotic process	14	2	0.14	0.00886
-33	GO:0031295	T cell costimulation	47	3	0.49	0.01248
-34	GO:0001890	placenta development	88	4	0.91	0.01269
-35	GO:0001975	response to amphetamine	17	2	0.18	0.01298
-36	GO:0019430	removal of superoxide radicals	19	2	0.2	0.0161
-37	GO:0030217	T cell differentiation	201	15	2.08	0.01727
-38	GO:0042098	T cell proliferation	138	4	1.42	0.01753
-39	GO:0033077	T cell differentiation in thymus	53	8	0.55	0.01761
-40	GO:0046632	alpha-beta T cell differentiation	88	3	0.91	0.0212
-41	GO:0033119	negative regulation of RNA splicing	22	2	0.23	0.02132
-42	GO:0009408	response to heat	132	3	1.36	0.02519
-43	GO:0007569	cell aging	86	3	0.89	0.02902
-44	GO:1900153	positive regulation of nuclear-transcribed mRNA catabolic process, deadenylation-dependent decay	15	2	0.15	0.03041
-45	GO:0032673	regulation of interleukin-4 production	23	2	0.24	0.03043
-46	GO:0051169	nuclear transport	298	3	3.08	0.03096
-47	GO:0051085	chaperone cofactor-dependent protein refolding	27	2	0.28	0.03134
-48	GO:1904837	beta-catenin-TCF complex assembly	27	2	0.28	0.03134
-49	GO:0001649	osteoblast differentiation	117	4	1.21	0.03276
-50	GO:0006414	translational elongation	121	4	1.25	0.0364
-51	GO:0071364	cellular response to epidermal growth factor stimulus	30	2	0.31	0.03807
-52	GO:0050863	regulation of T cell activation	249	9	2.57	0.03857
-53	GO:0048538	thymus development	33	2	0.34	0.0453
-54	GO:0010718	positive regulation of epithelial to mesenchymal transition	33	2	0.34	0.0453
-55	GO:0001954	positive regulation of cell-matrix adhesion	34	2	0.35	0.04782
-56	GO:0050852	T cell receptor signaling pathway	172	8	1.78	0.04792
-57	GO:0043549	regulation of kinase activity	612	11	6.32	0.04874
+14	GO:2001244	positive regulation of intrinsic apoptotic signaling pathway	48	4	0.5	0.00147
+15	GO:0000470	maturation of LSU-rRNA	20	4	0.21	0.00149
+16	GO:0000462	maturation of SSU-rRNA from tricistronic rRNA transcript (SSU-rRNA, 5.8S rRNA, LSU-rRNA)	32	4	0.33	0.0018
+17	GO:0071353	cellular response to interleukin-4	26	3	0.27	0.00234
+18	GO:0032071	regulation of endodeoxyribonuclease activity	8	2	0.08	0.00284
+19	GO:0050850	positive regulation of calcium-mediated signaling	28	3	0.29	0.00291
+20	GO:0042274	ribosomal small subunit biogenesis	62	13	0.64	0.00296
+21	GO:1904667	negative regulation of ubiquitin protein ligase activity	9	2	0.09	0.00363
+22	GO:0045060	negative thymic T cell selection	9	2	0.09	0.00363
+23	GO:0033673	negative regulation of kinase activity	184	3	1.9	0.00457
+24	GO:0045471	response to ethanol	67	4	0.69	0.005
+25	GO:0033151	V(D)J recombination	12	2	0.12	0.00651
+26	GO:0045663	positive regulation of myoblast differentiation	13	2	0.13	0.00765
+27	GO:0000463	maturation of LSU-rRNA from tricistronic rRNA transcript (SSU-rRNA, 5.8S rRNA, LSU-rRNA)	14	2	0.14	0.00886
+28	GO:0070233	negative regulation of T cell apoptotic process	14	2	0.14	0.00886
+29	GO:0045116	protein neddylation	14	2	0.14	0.00886
+30	GO:0033081	regulation of T cell differentiation in thymus	16	2	0.17	0.01153
+31	GO:0031295	T cell costimulation	47	3	0.49	0.01248
+32	GO:0001890	placenta development	88	4	0.91	0.01269
+33	GO:0001975	response to amphetamine	17	2	0.18	0.01298
+34	GO:0019430	removal of superoxide radicals	19	2	0.2	0.0161
+35	GO:0030217	T cell differentiation	201	15	2.08	0.01727
+36	GO:0042098	T cell proliferation	138	4	1.42	0.01753
+37	GO:0033077	T cell differentiation in thymus	53	8	0.55	0.01761
+38	GO:0046632	alpha-beta T cell differentiation	88	3	0.91	0.0212
+39	GO:0033119	negative regulation of RNA splicing	22	2	0.23	0.02132
+40	GO:0009408	response to heat	132	3	1.36	0.02519
+41	GO:0006417	regulation of translation	297	11	3.07	0.02555
+42	GO:0007569	cell aging	86	3	0.89	0.02902
+43	GO:1900153	positive regulation of nuclear-transcribed mRNA catabolic process, deadenylation-dependent decay	15	2	0.15	0.03041
+44	GO:0032673	regulation of interleukin-4 production	23	2	0.24	0.03043
+45	GO:0051169	nuclear transport	298	3	3.08	0.03096
+46	GO:0051085	chaperone cofactor-dependent protein refolding	27	2	0.28	0.03134
+47	GO:1904837	beta-catenin-TCF complex assembly	27	2	0.28	0.03134
+48	GO:0001649	osteoblast differentiation	117	4	1.21	0.03276
+49	GO:0006414	translational elongation	121	4	1.25	0.0364
+50	GO:0071364	cellular response to epidermal growth factor stimulus	30	2	0.31	0.03807
+51	GO:0050863	regulation of T cell activation	249	9	2.57	0.03857
+52	GO:0048538	thymus development	33	2	0.34	0.0453
+53	GO:0010718	positive regulation of epithelial to mesenchymal transition	33	2	0.34	0.0453
+54	GO:0001954	positive regulation of cell-matrix adhesion	34	2	0.35	0.04782
+55	GO:0050852	T cell receptor signaling pathway	172	8	1.78	0.04792
+56	GO:0043549	regulation of kinase activity	612	11	6.32	0.04874
