@@ -45,7 +45,7 @@ opt_parser = OptionParser(option_list=option_list)
 opt = parse_args(opt_parser)
 
 # TESTPARAM
-dotest <- FALSE
+dotest <- TRUE
 if(dotest){
   opt$gene_list <- '~/Documents/contribution-day/20210621_contribution_day/go_enrich/gene_list.txt'
   opt$gene_universe <- '~/Documents/contribution-day/20210621_contribution_day/go_enrich/gene_universe.txt'
@@ -64,12 +64,12 @@ if (is.null(opt$gene_list)) { # Check if file was provided
 if (is.null(opt$gene_universe)) { # Check if file was provided
   stop(paste0(script_name, '::No input gene universe given.'))
 } else if(!file.exists(opt$gene_universe)){ # Check if file exists
-  stop(paste0(script_name_name, '::Input file does not exist. Check input: ', opt$gene_universe))
+  stop(paste0(script_name, '::Input file does not exist. Check input: ', opt$gene_universe))
 }
 
 # Check output directory
 if (!file.exists(opt$outdir)){ # Check if file exists
-  stop(paste0(script_name_name, '::Output directory does not exist. Check input: ', opt$outdir))
+  stop(paste0(script_name, '::Output directory does not exist. Check input: ', opt$outdir))
 }
 
 # Select gene database to use, and check species
@@ -178,7 +178,7 @@ for (ont in c("BP", "CC", "MF")) {
   ggsave(sprintf("%s/go_enrich_%s_top10_barplot.png",  opt$outdir, GOdata@ontology), height=4, width=10)
   
   # Select top 30 GO terms
-    # If there are less than 30 significant GO terms, dont select 30 (would introduce NAs...)
+  # If there are less than 30 significant GO terms, dont select 30 (would introduce NAs...)
   n_top_gos <- min(30, nrow(result_table_full))
 
   result_table_top30 <- result_table_full[1:n_top_gos,]
