@@ -22,11 +22,11 @@ The following parameters can be passed to the script. Default values are in [squ
 Rscript go_enrich.R  \
   --gene_list example_input/gene_list.txt \
   --gene_universe example_input/gene_universe.txt \  
-  --gene_ids SYMBOL \
   --outdir example_output \ 
-  --pvalue_cutoff 0.05 \
   --species human \
+  --gene_ids SYMBOL \
   --node_size 10 \
+  --pvalue_cutoff 0.05 \
   --dag TRUE \
   --dag_format svg
 ```
