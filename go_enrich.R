@@ -30,27 +30,37 @@ option_list = list(
               help="Path to file containing input genes. Each gene has to be separated by a newline.", metavar="character"),
   make_option(c("--gene_universe"), type="character", 
               help="Path to file containing genes to test enrichment against. Each gene has to be separated by a newline.", metavar="character"),
-  make_option(c("--outdir"), type="character", default=".",
-              help="Directory to write output to [default = go_enich]", metavar="character"),
-  make_option(c("--species"), type="character", default='human', 
-              help="Species from which the data is derived. Currently, only human or mouse are supported [default = %default]", metavar="character"),
-  make_option(c("--gene_ids"), type="character", default='SYMBOL', 
-              help="Gene ids, e.g. ALIAS, SYMBOL, ENSEMBL, ENTREZID. For a complete list, see the AnnotationDBI vignette [default = %default]", metavar="character"),
-  make_option(c("--node_size"), type="numeric", default='5', 
-              help="An integer larger or equal to 1, used to prune the GO hierarchy from the terms which have less than nodeSize annotated genes. Values between 5 and 10 are recommended. [default = %default]", metavar="character"),
-  make_option(c("--pvalue_cutoff"), type="numeric", default='0.05', 
-              help="A numeric value between 0 and 1, used to remove non-signifcant GO terms from the result table. [default = %default]", metavar="character")
+  make_option(c("--outdir"), type="character",
+              help="Directory to write output to.", metavar="character"),
+  make_option(c("--species"), type="character", default="human", 
+              help="Species from which the data is derived. Currently, only human or mouse are supported. [default = %default]", metavar="character"),
+  make_option(c("--gene_ids"), type="character", default="SYMBOL", 
+              help="Gene ids of genes in gene_list, e.g. ALIAS, SYMBOL, ENSEMBL, ENTREZID. For a complete list, see the AnnotationDbi vignette [default = %default]", metavar="character"),
+  make_option(c("--node_size"), type="numeric", default=5, 
+              help="An integer larger or equal to 1, used to prune the GO hierarchy from the terms which have less than node_size annotated genes (after the true path rule is applied). Values between 5 and 10 are recommended. [default = %default]", metavar="character"),
+  make_option(c("--pvalue_cutoff"), type="numeric", default=0.05, 
+              help="A numeric value between 0 and 1, used to remove non-signifcant GO terms from the result table. [default = %default]", metavar="character"),
+  make_option(c("--dag"), type="logical", default=TRUE, 
+              help="If TRUE, a directed acyclic graph of the top 5 enriched GO terms is created. [default = %default]", metavar="character"),
+  make_option(c("--dag_format"), type="character", default="svg", 
+              help="output format for DAG: svg or pdf. [default = %default]", metavar="character")
 ); 
 opt_parser = OptionParser(option_list=option_list)
 opt = parse_args(opt_parser)
 
-# TESTPARAM
-dotest <- TRUE
+# Used for testing
+dotest <- FALSE
 if(dotest){
-  opt$gene_list <- '~/Documents/contribution-day/20210621_contribution_day/go_enrich/gene_list.txt'
-  opt$gene_universe <- '~/Documents/contribution-day/20210621_contribution_day/go_enrich/gene_universe.txt'
-  opt$outdir <- '~/Documents/contribution-day/20210621_contribution_day/go_enrich/test_output'
-  opt$node_size <- 5
+  setwd("~/Documents/contribution-day/20210621_contribution_day/go_enrich")
+  opt$gene_list <- 'gene_list.txt'
+  opt$gene_universe <- 'gene_universe.txt'
+  opt$outdir <- 'example_output'
+  opt$gene_ids <- "SYMBOL"
+  opt$species <- "human"
+  opt$pvalue_cutoff <- 0.1
+  opt$node_size <- -1
+  opt$dag <- TRUE
+  opt$dag_format <- "svg"
 }
 
 # Check gene list
@@ -68,7 +78,7 @@ if (is.null(opt$gene_universe)) { # Check if file was provided
 }
 
 # Check output directory
-if (!file.exists(opt$outdir)){ # Check if file exists
+if (!file.exists(opt$outdir)){ # Check if directory exists
   stop(paste0(script_name, '::Output directory does not exist. Check input: ', opt$outdir))
 }
 
@@ -81,6 +91,31 @@ if(tolower(opt$species) == 'human') {
   stop(paste0(script_name, '::Invalid species: ', opt$species, '. Current version supports human or mouse.'))
 }
 
+# Check p-value cutoff
+if (opt$pvalue_cutoff < 0 | opt$pvalue_cutoff > 1) {
+  stop(paste0(script_name, '::P-value cutoff must be >= 0 or <= 1. Check input: ', opt$pvalue_cutoff))
+}
+
+# Check node_size
+if (opt$node_size <= 0) {
+  stop(paste0(script_name, '::Node size must be > 0. Check input: ', opt$node_size))
+}
+
+# Check gene ids
+if(!opt$gene_ids %in% keytypes(annotationdbi_obj)) {
+  stop(paste0(script_name, '::Invalid Gene id. Check input: ', opt$gene_ids, '. Must be one of: ', paste(keytypes(annotationdbi_obj), collapse=", "), '.' ))
+}
+
+# Check DAG boolean
+if (!opt$dag %in% c(TRUE, FALSE)) { # Check if dag format is correct
+  stop(paste0(script_name, '::DAG boolean must be "TRUE" or "FALSE". Check input: ', opt$dag))
+}
+
+# Check DAG format
+if (!opt$dag_format %in% c("svg", "pdf")) { # Check if dag format is correct
+  stop(paste0(script_name, '::DAG format must be "svg" or "pdf". Check input: ', opt$dag_format))
+}
+
 ################################################
 # GO enrichment
 ################################################
@@ -90,7 +125,7 @@ gene_universe <- read.table(opt$gene_universe, stringsAsFactors=FALSE)[,1]
 
 # Create table containing GO IDs per genes
 gene_universe_annotated <- AnnotationDbi::select(
-  x = org.Hs.eg.db,
+  x = annotationdbi_obj,
   keys = gene_universe,
   columns = c(opt$gene_ids, 'GO'),
   keytype = opt$gene_ids
@@ -109,8 +144,8 @@ gene_list_raw <- read.table(opt$gene_list, stringsAsFactors=FALSE)[,1]
 gene_list <- gene_list_raw[gene_list_raw %in% gene_universe_annotated[,1]]
 message(paste0(script_name, "::Genes removed without GO annotation: ", sum(!gene_list %in% gene_universe_annotated[,1]), " out of ", length(gene_list_raw)))
 
-# Define all genes vector. All genes start with a FALSE value
-allGenes <- rep(FALSE, length(gene_universe))
+# Define all genes vector. All genes start with a 0 value
+allGenes <- rep(0, length(gene_universe))
 names(allGenes) <- gene_universe
 
 # Genes that are in the gene list get a 1 value (allGenes has to be a numeric vector)
@@ -145,7 +180,7 @@ for (ont in c("BP", "CC", "MF")) {
   result_table_full$classicFisher <- as.numeric(result_table_full$classicFisher)
   
   # Remove non-significant GO terms
-  result_table_full <- dplyr::filter(result_table_full, classicFisher < 0.05)
+  result_table_full <- dplyr::filter(result_table_full, classicFisher < opt$pvalue_cutoff)
   
   # Save results table
   write.table(result_table_full, sprintf("%s/go_enrich_%s.tsv", opt$outdir, GOdata@ontology), quote=FALSE, row.names=TRUE, col.names=TRUE, sep="\t")
@@ -180,7 +215,6 @@ for (ont in c("BP", "CC", "MF")) {
   # Select top 30 GO terms
   # If there are less than 30 significant GO terms, dont select 30 (would introduce NAs...)
   n_top_gos <- min(30, nrow(result_table_full))
-
   result_table_top30 <- result_table_full[1:n_top_gos,]
   
   # Format new column as combination of GO ID and Term
@@ -213,27 +247,18 @@ for (ont in c("BP", "CC", "MF")) {
     coord_flip() + 
     theme(legend.text = element_text(size = 10)) # Legend text size
   ggsave(sprintf("%s/go_enrich_%s_top30_dotplot.png", opt$outdir, GOdata@ontology), height=8, width=10)
-  
-  # Create and save DAG
-  svg(sprintf("%s/go_enrich_%s_top5_DAG.svg", opt$outdir, GOdata@ontology), height=20, width=20)
-  showSigOfNodes(GOdata, score(result), firstSigNodes = 5, useInfo = "all")
-  dev.off()
+    
+  if (opt$dag) {
+    # Create and save DAG
+    if (opt$dag_format == "svg") {
+      svg(sprintf("%s/go_enrich_%s_top5_DAG.svg", opt$outdir, GOdata@ontology), height=20, width=20)
+    } else {
+      pdf(sprintf("%s/go_enrich_%s_top5_DAG.pdf", opt$outdir, GOdata@ontology), height=20, width=20)
+    }
+    showSigOfNodes(GOdata, score(result), firstSigNodes = 5, useInfo = "all")
+    dev.off()
+  }
 }
 
 end_time <- Sys.time()
 message(paste0("Finished ", script_name, " at ", end_time))
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-  
