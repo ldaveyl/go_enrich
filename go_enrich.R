@@ -43,7 +43,7 @@ option_list = list(
   make_option(c("--dag"), type="logical", default=TRUE, 
               help="If TRUE, a directed acyclic graph of the top 5 enriched GO terms is created. [default = %default]", metavar="character"),
   make_option(c("--dag_format"), type="character", default="svg", 
-              help="output format for DAG: svg or pdf. [default = %default]", metavar="character")
+              help="Output format for DAG: svg or pdf. [default = %default]", metavar="character")
 ); 
 opt_parser = OptionParser(option_list=option_list)
 opt = parse_args(opt_parser)
@@ -51,14 +51,14 @@ opt = parse_args(opt_parser)
 # Used for testing
 dotest <- FALSE
 if(dotest){
-  setwd("~/Documents/contribution-day/20210621_contribution_day/go_enrich")
-  opt$gene_list <- 'gene_list.txt'
-  opt$gene_universe <- 'gene_universe.txt'
+  setwd("/home/rstudio/02_code/go_enrichment/go_enrich")
+  opt$gene_list <- 'example_input/gene_list.txt'
+  opt$gene_universe <- 'example_input/gene_universe.txt'
   opt$outdir <- 'example_output'
   opt$gene_ids <- "SYMBOL"
   opt$species <- "human"
-  opt$pvalue_cutoff <- 0.1
-  opt$node_size <- -1
+  opt$pvalue_cutoff <- 0.05
+  opt$node_size <- 10
   opt$dag <- TRUE
   opt$dag_format <- "svg"
 }
@@ -167,6 +167,7 @@ for (ont in c("BP", "CC", "MF")) {
 
   # Run enrichment test
   result <- runTest(GOdata, algorithm = "weight01", statistic = "fisher")
+
   no_of_go_terms_scored <- length(result@score)
   
   # Print some statistics
@@ -182,8 +183,30 @@ for (ont in c("BP", "CC", "MF")) {
   # Remove non-significant GO terms
   result_table_full <- dplyr::filter(result_table_full, classicFisher < opt$pvalue_cutoff)
   
+  # Retrieve all genes per GO term from GOdata object
+  allGO <- genesInTerm(GOdata)
+  
+  # Rename columns
+  result_table_full <- result_table_full %>% dplyr::rename("nAnnotated" = "Annotated", 
+                                      "nSignificant" = "Significant")
+  
+  # Add genes for nAnnotated
+  result_table_full$Annotated <- unlist(lapply(result_table_full$GO.ID, function(x) paste0(allGO[x][[1]], collapse=", ")))
+  
+  # Add genes for nSignficant
+  result_table_full$Significant <- unlist(lapply(result_table_full$Annotated, function(x) paste0(strsplit(x, ", ")[[1]][strsplit(x, ", ")[[1]] %in% gene_list], collapse=", ")))
+
+  # Rename column
+  result_table_full <- result_table_full %>% dplyr::rename("Pvalue" = "classicFisher")
+  
+  # Add Rank
+  result_table_full$Rank <- 1:nrow(result_table_full)
+
+  # Rearrange and remove "Expected" column (no documentation on what exactly this is)
+  result_table_full <- result_table_full %>% dplyr::select("Rank", "GO.ID", "Term", "Pvalue", "nAnnotated", "nSignificant", "Annotated", "Significant")
+
   # Save results table
-  write.table(result_table_full, sprintf("%s/go_enrich_%s.tsv", opt$outdir, GOdata@ontology), quote=FALSE, row.names=TRUE, col.names=TRUE, sep="\t")
+  write.table(result_table_full, sprintf("%s/go_enrich_%s.tsv", opt$outdir, GOdata@ontology), quote=FALSE, row.names=FALSE, col.names=TRUE, sep="\t")
   
   # Select top 10 GO terms
   result_table_top10 <- result_table_full[1:10,]
@@ -201,7 +224,7 @@ for (ont in c("BP", "CC", "MF")) {
     xtitle <- "Molecular Function"
   }
   
-  plt <- ggplot(result_table_top10, aes(x=Term, y=-log10(classicFisher))) +
+  plt <- ggplot(result_table_top10, aes(x=Term, y=-log10(Pvalue))) +
     stat_summary(geom = "bar", fun = mean, position = "dodge") +
     scale_y_continuous(breaks = round(seq(0, -log10(1e-30), by = 2), 1)) +
     xlab(xtitle) +
@@ -222,23 +245,23 @@ for (ont in c("BP", "CC", "MF")) {
   result_table_top30$Term <- factor(result_table_top30$Term, levels=rev(result_table_top30$Term))
   
   # Calculate GeneRatio
-  result_table_top30$GeneRatio <- round(result_table_top30$Significant / result_table_top30$Annotated, 2)
+  result_table_top30$GeneRatio <- round(result_table_top30$nSignificant / result_table_top30$nAnnotated, 2)
   
   # Calculate GeneCount
-  result_table_top30$GeneCount <- result_table_top30$Significant
+  result_table_top30$GeneCount <- result_table_top30$nSignificant
   result_table_top30$Term <- factor(result_table_top30$Term, levels = rev(result_table_top30$Term)) # fixes order
   
   # Create plot
   plt <- ggplot(result_table_top30, aes(x=Term, 
                                         y=GeneRatio, 
                                         size=GeneCount, 
-                                        fill=-log10(classicFisher))) +
+                                        fill=-log10(Pvalue))) +
     geom_point(shape = 21) +
     scale_fill_continuous(low = 'blue', high = 'red') +
     ylim(0, 1) + # consistently 0 to 1 Gene Ratio
     labs(
       x = "",
-      y = "Gene Ratio",
+      y = "GeneRatio",
       fill = "Enrichment (-log10 p-value)",
       title = sprintf("GO enrichment %s", GOdata@ontology), 
       subtitle = sprintf("Top %s terms ordered by p-value", n_top_gos)
